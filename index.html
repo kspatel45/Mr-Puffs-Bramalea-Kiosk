@@ -17,12 +17,13 @@
             background-color: var(--dark);
             color: var(--white);
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* Slideshow Container */
+        /* Slideshow Container - Auto Adjusts */
         .slideshow-container {
             flex: 1;
             position: relative;
@@ -31,84 +32,88 @@
             align-items: center;
             justify-content: center;
             background: #000;
+            width: 100%;
         }
 
         .slide {
             position: absolute;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
             opacity: 0;
-            /* Transition for both Opacity and the Zoom effect */
             transition: opacity 1.5s ease-in-out, transform 9s linear;
-            object-fit: contain;
-            transform: scale(1); /* Starting scale */
+            /* contain ensures the whole poster is always visible regardless of screen shape */
+            object-fit: contain; 
+            transform: scale(1);
         }
 
         .slide.active {
             opacity: 1;
-            transform: scale(1.1); /* Slow zoom in effect over 9 seconds */
+            transform: scale(1.08); /* Reduced zoom slightly for better fit */
         }
 
-        /* Bottom QR Action Bar */
+        /* Bottom QR Action Bar - Responsive Flex */
         .bottom-bar {
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             border-top: 3px solid var(--primary);
-            padding: 15px 20px;
+            padding: 10px;
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
-            height: 180px;
-            z-index: 10; /* Ensure bar stays above zooming images */
+            min-height: 160px;
+            z-index: 10;
+            flex-wrap: wrap; /* Allows cards to wrap on small screens */
+            gap: 15px;
         }
 
         .qr-item {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 12px;
             border: 1px solid rgba(255, 102, 0, 0.3);
             flex: 1;
-            margin: 0 10px;
+            min-width: 280px; /* Prevents cards from getting too squished */
             max-width: 400px;
         }
 
         .qr-item img {
-            width: 100px;
-            height: 100px;
+            width: clamp(70px, 10vw, 100px); /* Adjusts size based on screen width */
+            height: auto;
             background: white;
             padding: 5px;
             border-radius: 5px;
+            flex-shrink: 0;
         }
 
         .qr-info {
             text-align: left;
+            overflow: hidden;
         }
 
         .qr-info h2 {
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
             color: var(--primary);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         .qr-info p {
-            font-size: 0.9rem;
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem);
             color: #ccc;
+            margin-bottom: 5px;
         }
 
         .click-btn {
             display: inline-block;
-            margin-top: 8px;
             background: var(--primary);
             color: white;
             text-decoration: none;
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             text-transform: uppercase;
         }
@@ -116,6 +121,13 @@
         .vip-item {
             border: 2px solid var(--white);
             box-shadow: 0 0 15px rgba(255, 102, 0, 0.4);
+        }
+
+        /* Responsive Mobile Tweak */
+        @media (max-height: 600px) {
+            .bottom-bar { min-height: 120px; padding: 5px; }
+            .qr-item { padding: 5px 10px; }
+            .qr-item img { width: 60px; }
         }
     </style>
 </head>
@@ -164,12 +176,9 @@
         const intervalTime = 9000;
 
         function nextSlide() {
-            // Reset the scale of the slide that is about to hide so it can zoom again later
             slides[currentSlide].style.transform = "scale(1)";
             slides[currentSlide].classList.remove('active');
-            
             currentSlide = (currentSlide + 1) % slides.length;
-            
             slides[currentSlide].classList.add('active');
         }
 
