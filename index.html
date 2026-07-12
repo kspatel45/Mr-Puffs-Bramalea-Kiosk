@@ -172,6 +172,14 @@
     </div>
 
     <script>
+
+        // Automatically reload the entire page every 15 minutes (900,000 milliseconds)
+// This will pull the fresh HTML/Images from GitHub without freezing your slideshow
+setInterval(function() {
+    window.location.reload(true); // 'true' forces a reload from the server, bypassing cache
+}, 900000);
+
+        
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const intervalTime = 9000;
